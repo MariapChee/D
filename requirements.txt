@@ -4,3 +4,4 @@ g4f
 pillow 
 transformers 
 pytesseract
+torch
