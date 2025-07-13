@@ -1,9 +1,24 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request, render_template, jsonify
-import requests
+from g4f.client import Client
+import typing
+import os
 
 app = Flask(__name__)
 
-API_URL = "https://oi-vscode-server-2.onrender.com/v1/chat/completions"
+# GPT-4 free function
+def gpt_4_free_client(messages: typing.List[typing.Dict[str, str]]) -> typing.Union[str, None]:
+    client = Client()
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+        )
+        return response.choices[0].message.content
+    except:
+        return None
 
 @app.route('/')
 def index():
@@ -12,17 +27,13 @@ def index():
 @app.route('/ask', methods=['POST'])
 def ask():
     user_input = request.json.get("message")
-    payload = {
-        "model": "gpt-4o-mini",
-        "messages": [{"role": "user", "content": user_input}],
-        "stream": False
-    }
-    try:
-        response = requests.post(API_URL, json=payload)
-        response.raise_for_status()
-        return jsonify(response.json())
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    conversation = [{"role": "user", "content": user_input}]
+    result = gpt_4_free_client(conversation)
+    if result:
+        return jsonify({"content": result})
+    else:
+        return jsonify({"error": "AI failed to respond."})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
