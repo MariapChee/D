@@ -2,266 +2,220 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rajeet AI Pro Chat</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
   <style>
     body {
-      background: #0d1117;
-      color: #f5f5f5;
-      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: #0f0f0f;
+      color: white;
     }
-
     .chat-container {
       display: flex;
-      gap: 1rem;
+      height: 100vh;
     }
-
-    #sidebar {
-      width: 240px;
-      background: #161b22;
-      padding: 10px;
-      border-radius: 8px;
+    .sidebar {
+      width: 250px;
+      background: #181818;
       overflow-y: auto;
-      max-height: 90vh;
+      padding: 10px;
     }
-
-    #sidebar h2 {
-      font-size: 1rem;
+    .chat-title {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      cursor: pointer;
+    }
+    .chat-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      background: #202020;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .message {
       margin-bottom: 10px;
     }
-
-    .chat-title {
-      padding: 5px 10px;
-      margin: 5px 0;
-      background: #21262d;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #chat {
-      flex: 1;
-      padding: 1rem;
-      background: #1c1c1c;
-      border-radius: 8px;
-      height: 75vh;
-      overflow-y: auto;
-    }
-
-    .bubble {
-      background: #2a2a2a;
-      padding: 10px 15px;
-      margin: 8px 0;
-      border-radius: 8px;
-    }
-
-    .user {
-      background: #2563eb;
-      color: white;
+    .message.user .text {
       text-align: right;
+      background: #0055aa;
     }
-
-    .bot {
-      background: #202020;
-      color: #00ffe1;
+    .message.bot .text {
       text-align: left;
+      background: #222;
     }
-
-    .timestamp {
-      font-size: 0.75em;
-      color: #aaa;
+    .text {
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px;
+      white-space: pre-wrap;
     }
-
-    .edit-button {
-      font-size: 0.7em;
-      color: #ccc;
-      cursor: pointer;
-      float: right;
+    .meta {
+      font-size: 12px;
+      color: #999;
     }
-
-    .floating-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #363636;
+    .input-bar {
+      display: flex;
+      padding: 10px;
+      background: #151515;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      background: #222;
       color: white;
-      padding: 12px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 24px;
       border: none;
+      border-radius: 4px;
+      font-size: 14px;
     }
-
-    .popup {
-      position: fixed;
+    button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      background: #00aaff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .plus-button {
+      position: absolute;
       bottom: 80px;
       right: 20px;
-      background: #2a2a2a;
-      padding: 10px;
+      background: #00aaff;
+      color: white;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 26px;
+      text-align: center;
+      line-height: 45px;
+      cursor: pointer;
+    }
+    .upload-options {
+      position: absolute;
+      right: 20px;
+      bottom: 130px;
+      background: #222;
       border-radius: 8px;
       display: none;
       flex-direction: column;
     }
-
-    .popup button {
-      margin: 5px 0;
-    }
-
-    #user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #666;
-      float: right;
+    .upload-options button {
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <section class="section">
-    <div class="container">
-      <nav class="level">
-        <div class="level-left">
-          <h1 class="title has-text-white">🤖 Rajeet AI Pro Chat</h1>
-        </div>
-        <div class="level-right">
-          <div id="user-avatar" title="Sign In"></div>
-        </div>
-      </nav>
-
-      <div class="chat-container">
-        <div id="sidebar">
-          <h2>🧠 History</h2>
-          <!-- Chat history populated here -->
-        </div>
-
-        <div style="flex: 1;">
-          <div id="chat"></div>
-
-          <div class="field has-addons mt-3">
-            <div class="control is-expanded">
-              <input class="input" id="input" placeholder="Type your message..." />
-            </div>
-            <div class="control">
-              <button class="button is-info" onclick="sendMessage()">Send</button>
-            </div>
-            <div class="control">
-              <button class="button is-danger" onclick="stopResponse()">⛔</button>
-            </div>
-          </div>
-
-          <input type="file" id="fileInput" style="display:none" onchange="uploadFile(event)" />
-          <div class="popup" id="popupMenu">
-            <button class="button is-small" onclick="selectPhoto()">🖼 Add Photo</button>
-            <button class="button is-small" onclick="selectFile()">📁 Add File</button>
-          </div>
-          <button class="floating-button" onclick="togglePopup()">+</button>
-        </div>
-      </div>
+<div class="chat-container">
+  <div class="sidebar" id="chatHistory">
+    {% for chat in chats %}
+    <div class="chat-title" onclick="loadChat('{{ chat.id }}')">{{ chat.title }}</div>
+    {% endfor %}
+  </div>
+  <div class="chat-panel">
+    <div class="chat-header">🚀 Rajeet AI Pro Chat</div>
+    <div class="messages" id="messages"></div>
+    <div class="input-bar">
+      <input type="text" id="input" placeholder="Type your message..." onkeydown="if(event.key === 'Enter') sendMessage()" />
+      <button onclick="sendMessage()">Send</button>
     </div>
-  </section>
+    <div class="plus-button" onclick="toggleUpload()">+</div>
+    <div class="upload-options" id="uploadOptions">
+      <button onclick="uploadPhoto()">Add Photo</button>
+      <button onclick="uploadFile()">Add File</button>
+    </div>
+    <input type="file" id="fileInput" style="display:none" />
+  </div>
+</div>
 
-  <script>
-    let currentChatId = null;
-    let controller = null;
+<script>
+let currentChatId = null;
 
-    function stopResponse() {
-      if (controller) controller.abort();
-    }
+function toggleUpload() {
+  const opts = document.getElementById("uploadOptions");
+  opts.style.display = opts.style.display === "flex" ? "none" : "flex";
+}
 
-    function togglePopup() {
-      const menu = document.getElementById("popupMenu");
-      menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-    }
+async function sendMessage() {
+  const input = document.getElementById("input");
+  const msg = input.value.trim();
+  if (!msg) return;
+  addMessage("user", msg);
+  input.value = "";
 
-    function selectPhoto() {
-      document.getElementById("fileInput").accept = "image/*";
-      document.getElementById("fileInput").click();
-    }
+  const res = await fetch("/ask", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ message: msg, chat_id: currentChatId })
+  });
+  const data = await res.json();
+  currentChatId = data.chat_id;
+  addMessage("bot", data.content, data.timestamp);
+  refreshSidebar();
+}
 
-    function selectFile() {
-      document.getElementById("fileInput").accept = "*/*";
-      document.getElementById("fileInput").click();
-    }
+function addMessage(role, content, timestamp = new Date().toLocaleString()) {
+  const box = document.createElement("div");
+  box.className = "message " + role;
+  box.innerHTML = `
+    <div class="meta">${role} • ${timestamp}</div>
+    <div class="text">${content}</div>
+  `;
+  document.getElementById("messages").appendChild(box);
+  document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+}
 
-    async function uploadFile(e) {
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/analyze", {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      appendMessage("bot", `<b>🖼️ Image Summary:</b><br>${data.result}<br><small>Caption: ${data.caption}<br>OCR: ${data.ocr}</small>`);
-    }
+function uploadFile() {
+  const input = document.getElementById("fileInput");
+  input.onchange = async () => {
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/analyze", { method: "POST", body: formData });
+    const data = await res.json();
+    addMessage("bot", "📷 Image Analysis:\n" + data.result);
+  };
+  input.click();
+}
 
-    function appendMessage(role, text, time=null, id=null) {
-      const div = document.createElement("div");
-      div.className = `bubble ${role}`;
-      div.dataset.id = id || "";
-      div.innerHTML = `
-        <div class="content" ondblclick="editMessage(this, '${id}')">${text}</div>
-        <div class="timestamp">${time || new Date().toLocaleString()}</div>
-      `;
-      document.getElementById("chat").appendChild(div);
-      document.getElementById("chat").scrollTop = 999999;
-    }
+function uploadPhoto() {
+  uploadFile(); // In this setup, same as uploadFile
+}
 
-    async function editMessage(el, msgId) {
-      const newText = prompt("Edit your message:", el.innerText);
-      if (!newText || !msgId) return;
-      const res = await fetch(`/edit/${currentChatId}/${msgId}`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ new_content: newText })
-      });
-      const data = await res.json();
-      if (data.success) {
-        el.innerText = data.new_content;
-        el.nextElementSibling.innerText = data.timestamp;
-      }
-    }
+function loadChat(chatId) {
+  currentChatId = chatId;
+  fetch(`/history/${chatId}`)
+    .then(res => res.json())
+    .then(messages => {
+      document.getElementById("messages").innerHTML = "";
+      messages.forEach(m => addMessage(m.role, m.content, m.timestamp));
+    });
+}
 
-    async function sendMessage() {
-      const input = document.getElementById("input");
-      const msg = input.value.trim();
-      if (!msg) return;
-
-      appendMessage("user", msg);
-      input.value = "";
-      controller = new AbortController();
-
-      const res = await fetch("/ask", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: msg, chat_id: currentChatId}),
-        signal: controller.signal
-      });
-
-      const data = await res.json();
-      appendMessage("bot", data.content, data.timestamp, data.bot_msg_id);
-      currentChatId = data.chat_id;
-      loadChatList(); // refresh sidebar
-    }
-
-    async function loadChatList() {
-      const res = await fetch("/");
+function refreshSidebar() {
+  fetch("/")
+    .then(r => r.text())
+    .then(html => {
       const parser = new DOMParser();
-      const html = await res.text();
       const doc = parser.parseFromString(html, "text/html");
-      const serverChats = doc.querySelectorAll("#sidebar .chat-title");
-      const sidebar = document.getElementById("sidebar");
-      sidebar.innerHTML = "<h2>🧠 History</h2>";
-      serverChats.forEach(div => sidebar.appendChild(div));
-    }
-
-    async function loadChat(chatId) {
-      const res = await fetch("/history/" + chatId);
-      const messages = await res.json();
-      document.getElementById("chat").innerHTML = "";
-      messages.forEach(m => appendMessage(m.role, m.content, m.timestamp, m.id));
-      currentChatId = chatId;
-    }
-  </script>
+      document.getElementById("chatHistory").innerHTML = doc.getElementById("chatHistory").innerHTML;
+    });
+}
+</script>
 </body>
 </html>
