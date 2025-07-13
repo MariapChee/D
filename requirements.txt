@@ -1,3 +1,6 @@
-requests
-flask
-g4f
+flask 
+flask-session 
+g4f 
+pillow 
+transformers 
+pytesseract
