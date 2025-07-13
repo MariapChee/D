@@ -1,228 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Rajeet AI Web Chat</title>
-
-<style>
-  /* Reset & base */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0; padding: 0;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-
-  h1 {
-    text-align: center;
-    margin: 1rem 0;
-    text-shadow: 1px 1px 4px #000000aa;
-  }
-
-  #chat-container {
-    flex-grow: 1;
-    max-width: 700px;
-    width: 95%;
-    margin: 0 auto 1rem auto;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  }
-
-  #messages {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 1rem;
-  }
-
-  .message {
-    max-width: 75%;
-    padding: 0.8rem 1rem;
-    border-radius: 15px;
-    margin-bottom: 0.8rem;
-    line-height: 1.4;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-
-  .user {
-    background: #5a8dee;
-    align-self: flex-end;
-    color: white;
-    border-bottom-right-radius: 0;
-  }
-
-  .bot {
-    background: #2d2d44;
-    align-self: flex-start;
-    color: #cce5ff;
-    border-bottom-left-radius: 0;
-  }
-
-  #input-area {
-    display: flex;
-    padding: 0.8rem;
-    gap: 0.6rem;
-    background: rgba(0,0,0,0.15);
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-  }
-
-  #input {
-    flex-grow: 1;
-    border-radius: 25px;
-    border: none;
-    padding: 0.75rem 1.2rem;
-    font-size: 1rem;
-    outline: none;
-  }
-
-  #input:focus {
-    box-shadow: 0 0 8px #667eea;
-  }
-
-  #send-btn {
-    background: #667eea;
-    border: none;
-    color: white;
-    font-weight: 600;
-    padding: 0 1.6rem;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 1rem;
-  }
-
-  #send-btn:hover:not(:disabled) {
-    background: #4a63d2;
-  }
-
-  #send-btn:disabled {
-    background: #a5a5a5;
-    cursor: not-allowed;
-  }
-
-  #loading-spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    vertical-align: middle;
-    margin-left: 10px;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Scrollbar styling */
-  #messages::-webkit-scrollbar {
-    width: 8px;
-  }
-  #messages::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.05);
-  }
-  #messages::-webkit-scrollbar-thumb {
-    background-color: rgba(255,255,255,0.2);
-    border-radius: 4px;
-  }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    #chat-container {
-      width: 98%;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rajeet AI Pro Chat</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0e0e14;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    #input {
-      font-size: 0.9rem;
-    }
-    #send-btn {
-      padding: 0 1rem;
-      font-size: 0.9rem;
-    }
-  }
-</style>
 
+    header {
+      padding: 1rem;
+      background: #12121c;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #9f79ff;
+      box-shadow: 0 2px 10px #000;
+    }
+
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 1rem;
+      border-radius: 1rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #4f46e5;
+      color: #fff;
+      border-bottom-right-radius: 0;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: #222;
+      color: #c7faff;
+      border-bottom-left-radius: 0;
+    }
+
+    footer {
+      display: flex;
+      padding: 1rem;
+      background: #111;
+      box-shadow: 0 -2px 10px #000;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border-radius: 2rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: #1c1c2b;
+      color: #fff;
+    }
+
+    button {
+      margin-left: 1rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 2rem;
+      background: #9f79ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #b992ff;
+    }
+
+    .loading {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #eee;
+      border-top-color: #9f79ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        font-size: 1.2rem;
+      }
+      input {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<h1>GPT-4o-mini Web Chat</h1>
+<header>Rajeet AI Chat</header>
 
-<div id="chat-container">
-  <div id="messages"></div>
+<div id="chat"></div>
 
-  <div id="input-area">
-    <input
-      type="text"
-      id="input"
-      placeholder="Say something..."
-      autocomplete="off"
-      autofocus
-      onkeydown="if(event.key === 'Enter') sendMessage();"
-    />
-    <button id="send-btn" onclick="sendMessage()">Send</button>
-  </div>
-</div>
+<footer>
+  <input type="text" id="input" placeholder="Type your message..." onkeydown="if(event.key==='Enter') sendMessage()" />
+  <button onclick="sendMessage()">Send</button>
+</footer>
 
 <script>
-  const messagesEl = document.getElementById('messages');
-  const inputEl = document.getElementById('input');
-  const sendBtn = document.getElementById('send-btn');
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("input");
 
   function appendMessage(text, sender) {
-    const msgEl = document.createElement('div');
-    msgEl.classList.add('message', sender);
-    msgEl.textContent = text;
-    messagesEl.appendChild(msgEl);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + sender;
+    bubble.innerText = text;
+    chat.appendChild(bubble);
+    chat.scrollTop = chat.scrollHeight;
   }
 
   async function sendMessage() {
-    const msg = inputEl.value.trim();
+    const msg = input.value.trim();
     if (!msg) return;
 
-    appendMessage(msg, 'user');
-    inputEl.value = '';
-    sendBtn.disabled = true;
+    appendMessage(msg, "user");
+    input.value = "";
 
-    // Loading spinner
-    const loadingEl = document.createElement('span');
-    loadingEl.id = 'loading-spinner';
-    sendBtn.appendChild(loadingEl);
+    const botLoading = document.createElement("div");
+    botLoading.className = "bubble bot";
+    botLoading.innerHTML = `<div class="loading"></div>`;
+    chat.appendChild(botLoading);
+    chat.scrollTop = chat.scrollHeight;
 
     try {
-      const res = await fetch('/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg }),
+      const res = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
       });
-
       const data = await res.json();
-
+      botLoading.remove();
       if (data.error) {
-        appendMessage('Error: ' + data.error, 'bot');
+        appendMessage("❌ Error: " + data.error, "bot");
       } else {
-        const content = data.choices?.[0]?.message?.content || JSON.stringify(data);
-        appendMessage(content, 'bot');
+        appendMessage(data.content, "bot");
       }
     } catch (e) {
-      appendMessage('Network error: ' + e.message, 'bot');
-    } finally {
-      sendBtn.disabled = false;
-      loadingEl.remove();
-      inputEl.focus();
+      botLoading.remove();
+      appendMessage("⚠️ Network Error: " + e.message, "bot");
     }
   }
 </script>
